@@ -9,6 +9,18 @@
 // Google OAuth Client ID
 const GOOGLE_CLIENT_ID = "361972462193-tb3sasu5610tvo1hpet07k5d2laub5m2.apps.googleusercontent.com";
 
+// Determine if we're in the production environment (Vercel deployment)
+const isProduction = window.location.hostname === 'bhaat-ghor.vercel.app';
+
+// URLs for privacy policy and terms of service
+const PRIVACY_POLICY_URL = isProduction 
+    ? 'https://bhaat-ghor.vercel.app/pages/privacy-policy.html'
+    : '/pages/privacy-policy.html';
+    
+const TERMS_OF_SERVICE_URL = isProduction
+    ? 'https://bhaat-ghor.vercel.app/pages/terms-of-service.html'
+    : '/pages/terms-of-service.html';
+
 // Configuration object for Google Sign-In
 const googleAuthConfig = {
     clientId: GOOGLE_CLIENT_ID,
@@ -22,6 +34,15 @@ window.onload = function() {
     const googleSignInElements = document.querySelectorAll('#g_id_onload');
     googleSignInElements.forEach(element => {
         element.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
+        
+        // Set privacy policy and terms of service URLs
+        if (element.hasAttribute('data-auto_select')) {
+            element.setAttribute('data-context', 'signin');
+            element.setAttribute('data-ux_mode', 'popup');
+            element.setAttribute('data-itp_support', 'true');
+            element.setAttribute('data-privacy_policy_url', PRIVACY_POLICY_URL);
+            element.setAttribute('data-terms_of_service_url', TERMS_OF_SERVICE_URL);
+        }
     });
 };
 

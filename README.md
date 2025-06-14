@@ -1,4 +1,4 @@
-# Bhaat Ghor (On going)
+# Bhaat Ghor (On going Project)
 
 A modern food ordering and delivery platform with a sleek, responsive UI.
 

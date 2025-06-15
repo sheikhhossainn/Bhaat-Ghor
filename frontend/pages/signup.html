@@ -6,19 +6,28 @@
     <title>Bhaat Ghor - Sign Up</title>
     <link rel="stylesheet" href="../css/signup.css">
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google OAuth Client Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    <!-- Google OAuth Client Library -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- OAuth Configuration -->
-    <script src="../config/oauth-config.js"></script>
+    <!-- OAuth Configuration inline -->
+    <script>
+        // Google OAuth Client ID
+        const GOOGLE_CLIENT_ID = "361972462193-tb3sasu5610tvo1hpet07k5d2laub5m2.apps.googleusercontent.com";
+        
+        // Initialize Google Sign-In button when the page loads
+        window.addEventListener('DOMContentLoaded', function() {
+            // Set the client ID on the button
+            document.getElementById('g_id_onload').setAttribute('data-client_id', GOOGLE_CLIENT_ID);
+        });
+    </script>
 </head>
 <body>
     <div class="signup-container">
         <h1>Bhaat Ghor</h1>
         <h2>Create an Account</h2>              
         <div class="social-signup">
-            <div class="google-signin-container">                    
+            <div class="google-signin-container">                      
                 <div id="g_id_onload"
+                    data-client_id="361972462193-tb3sasu5610tvo1hpet07k5d2laub5m2.apps.googleusercontent.com"
                     data-context="signup"
                     data-ux_mode="popup"
                     data-callback="handleGoogleCredentialResponse"
@@ -26,7 +35,6 @@
                     data-auto_prompt="false"
                     data-itp_support="true"
                     data-skip_prompt_cookie="bhaat_ghor_session">
-                    <!-- Client ID will be set by JavaScript -->
                 </div>
                 
                 <div class="g_id_signin"

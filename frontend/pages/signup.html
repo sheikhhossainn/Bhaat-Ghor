@@ -95,8 +95,7 @@
         </form>
         
         <p class="login-text">Already have an account? <a href="login.html">Log in</a></p>
-    </div>    <!-- Google Sign-in Modal -->
-    <div id="google-signin-modal" class="modal">
+    </div>    <!-- Google Sign-in Modal -->    <div id="google-signin-modal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeModal('google-signin-modal')">&times;</span>
             <h3>Continue with Google</h3>
@@ -106,10 +105,11 @@
                     <p class="profile-text">Sign in with your Google account to continue</p>
                 </div>
                 <div id="google-account-info" class="google-account-info">
-                    <p>Please wait while we authenticate with Google...</p>
+                    <h4 id="google-user-name">Hello, Guest</h4>
+                    <p id="google-user-email">Please wait while we authenticate...</p>
                 </div>
                 <div id="google-auth-buttons">
-                    <button id="google-auth-continue" class="btn-primary" style="display:none;" onclick="completeGoogleSignIn()">Continue</button>
+                    <button id="google-auth-continue" class="btn-primary" onclick="completeGoogleSignIn()">Continue</button>
                     <button id="google-auth-cancel" class="btn-secondary" onclick="closeModal('google-signin-modal')">Cancel</button>
                 </div>
                 <p class="modal-footer">By continuing, you agree to our Terms of Service and Privacy Policy</p>

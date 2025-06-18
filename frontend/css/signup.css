@@ -236,18 +236,20 @@ input::placeholder {
 .modal-content {
     position: relative;
     background-color: #2a1607; /* Dark brown modal background */
-    margin: 10% auto;
+    background-image: linear-gradient(135deg, #2a1607 0%, #3a2213 100%);
+    margin: 10vh auto;
     padding: 30px;
     width: 90%;
-    max-width: 450px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    animation: modalFadeIn 0.3s;
+    max-width: 400px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    animation: modalFadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(233, 208, 182, 0.1);
 }
 
 @keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-50px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .close-button {
@@ -277,10 +279,14 @@ input::placeholder {
 /* Google Sign-in Modal Styles */
 .google-signin-content {
     text-align: center;
+    padding: 10px;
 }
 
 .google-profile {
     margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .profile-img {
@@ -288,11 +294,38 @@ input::placeholder {
     height: 80px;
     border-radius: 50%;
     margin-bottom: 15px;
+    border: 3px solid #7e3c09;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s;
+}
+
+.profile-img:hover {
+    transform: scale(1.05);
 }
 
 .profile-text {
     font-size: 16px;
     margin-bottom: 20px;
+    color: #e6d2b2;
+}
+
+.google-account-info {
+    background-color: #3a2213;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.google-account-info h4 {
+    margin-bottom: 5px;
+    color: #e6d2b2;
+    font-size: 18px;
+}
+
+.google-account-info p {
+    font-size: 15px;
+    color: #d2b795;
 }
 
 .google-account-select {
@@ -367,15 +400,50 @@ input::placeholder {
     color: #e9d0b6;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .btn-primary:hover {
     background-color: #9e4f0f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    width: 100%;
+    padding: 12px;
+    background-color: transparent;
+    border: 1px solid #7e3c09;
+    border-radius: 10px;
+    color: #e9d0b6;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(126, 60, 9, 0.1);
+}
+
+#google-auth-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
 }
 
 .modal-footer {
     margin-top: 25px;
     font-size: 12px;
     color: #a89583;
+    padding-top: 15px;
+    border-top: 1px solid rgba(233, 208, 182, 0.1);
 }

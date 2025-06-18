@@ -1,0 +1,354 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #1c120a;
+    color: #fcebce;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Hero header navigation styles for booking page */
+.hero-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 3rem;
+    width: 100%;
+}
+
+.brand-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fcebce;
+    text-decoration: none;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    color: #fcebce;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: #d4b896;
+}
+
+nav li:last-child a {
+    background-color: transparent;
+    border: 2px solid #fcebce;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+nav li:last-child a:hover {
+    background-color: #fcebce;
+    color: #1c120a;
+}
+
+/* Main booking container */
+.booking-container {
+    min-height: calc(100vh - 120px);
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.booking-content {
+    max-width: 500px;
+    width: 100%;
+    padding: 0 2rem;
+}
+
+/* Title and subtitle */
+.booking-title {
+    font-size: 4rem;
+    font-weight: 300;
+    color: #fcebce;
+    margin-bottom: 1rem;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.booking-subtitle {
+    font-size: 1.1rem;
+    color: #fcebce;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+    text-align: left;
+    font-family: 'Open Sans', sans-serif;
+}
+
+/* Form styling */
+.booking-form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 1.2rem;
+    color: #fcebce;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Date and time pickers */
+.date-picker,
+.time-picker {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background-color: transparent;
+    border: 2px solid #444;
+    border-radius: 8px;
+    color: #fcebce;
+    font-size: 1.1rem;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+}
+
+.date-picker:focus,
+.time-picker:focus {
+    outline: none;
+    border-color: #a65511;
+}
+
+/* Flatpickr customization */
+.flatpickr-calendar {
+    background: #1c120a;
+    border: 2px solid #a65511;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.flatpickr-day {
+    color: #fcebce;
+    border-radius: 6px;
+}
+
+.flatpickr-day.selected, 
+.flatpickr-day.startRange, 
+.flatpickr-day.endRange, 
+.flatpickr-day.selected.inRange, 
+.flatpickr-day.startRange.inRange, 
+.flatpickr-day.endRange.inRange, 
+.flatpickr-day.selected:focus, 
+.flatpickr-day.startRange:focus, 
+.flatpickr-day.endRange:focus, 
+.flatpickr-day.selected:hover, 
+.flatpickr-day.startRange:hover, 
+.flatpickr-day.endRange:hover, 
+.flatpickr-day.selected.prevMonthDay, 
+.flatpickr-day.startRange.prevMonthDay, 
+.flatpickr-day.endRange.prevMonthDay, 
+.flatpickr-day.selected.nextMonthDay, 
+.flatpickr-day.startRange.nextMonthDay, 
+.flatpickr-day.endRange.nextMonthDay {
+    background: #a65511;
+    border-color: #a65511;
+    color: #fcebce;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-weekdays,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    color: #fcebce;
+    fill: #fcebce;
+}
+
+.flatpickr-weekday {
+    color: #fcebce;
+}
+
+/* Time picker specific styles */
+.flatpickr-time input, 
+.flatpickr-time .flatpickr-time-separator, 
+.flatpickr-time .flatpickr-am-pm {
+    color: #fcebce;
+}
+
+.flatpickr-time input:focus, 
+.flatpickr-time .flatpickr-am-pm:focus {
+    background: #2c1e13;
+}
+
+.numInputWrapper:hover {
+    background: #2c1e13;
+}
+
+.flatpickr-day.today {
+    border-color: #a65511;
+    color: #a65511;
+    font-weight: bold;
+}
+
+.flatpickr-day.today:hover {
+    background: rgba(166, 85, 17, 0.2);
+}
+
+/* Calendar styling */
+.calendar {
+    margin: 2rem 0;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.day-label {
+    text-align: center;
+    font-weight: 500;
+    color: #fcebce;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #fcebce;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.calendar-day:hover {
+    background-color: rgba(166, 85, 17, 0.2);
+    border-color: #a65511;
+}
+
+.calendar-day.selected {
+    background-color: #a65511;
+    border-color: #a65511;
+    color: #fcebce;
+    font-weight: 600;
+}
+
+/* Table options */
+.table-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.table-option {
+    padding: 1rem;
+    background-color: transparent;
+    border: 2px solid #444;
+    border-radius: 8px;
+    color: #fcebce;
+    font-size: 1rem;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.table-option:hover {
+    border-color: #a65511;
+    background-color: rgba(166, 85, 17, 0.1);
+}
+
+.table-option.selected {
+    background-color: #a65511;
+    border-color: #a65511;
+    color: #fcebce;
+    font-weight: 600;
+}
+
+/* Book button */
+.book-btn {
+    width: 100%;
+    padding: 1.2rem 2rem;
+    background-color: #a65511;
+    color: #fcebce;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 2rem;
+}
+
+.book-btn:hover {
+    background-color: #8a4609;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(166, 85, 17, 0.3);
+}
+
+.book-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .booking-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-header {
+        padding: 1rem 2rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .brand-logo {
+        font-size: 2rem;
+    }
+    
+    nav ul {
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .booking-content {
+        padding: 0 1rem;
+    }
+    
+    .table-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .calendar-grid {
+        gap: 0.3rem;
+    }
+}

@@ -92,20 +92,22 @@ function updateGoogleModalWithUserInfo(user) {
     if (profileImg && user.picture) {
         profileImg.src = user.picture;
     }
+      // Update user name and email
+    const userName = document.getElementById('google-user-name');
+    const userEmail = document.getElementById('google-user-email');
     
-    // Update account info
-    const accountInfo = document.getElementById('google-account-info');
-    if (accountInfo) {
-        accountInfo.innerHTML = `
-            <h4>Hello, ${user.name}</h4>
-            <p>${user.email}</p>
-        `;
+    if (userName) {
+        userName.textContent = "Hello, " + user.name;
     }
     
-    // Show the continue button
-    const continueButton = document.getElementById('google-auth-continue');
-    if (continueButton) {
-        continueButton.style.display = 'block';
+    if (userEmail) {
+        userEmail.textContent = user.email;
+    }
+    
+    // Show continue button
+    const continueBtn = document.getElementById('google-auth-continue');
+    if (continueBtn) {
+        continueBtn.style.display = 'block';
     }
 }
 
@@ -121,9 +123,8 @@ function completeGoogleSignIn() {
     
     // In a real implementation, you would send the token to your backend
     // for verification and user creation/authentication
-    
-    // For demo purposes, we'll just show a success message
-    alert(`Successfully signed up with Google as ${googleUser.name} (${googleUser.email})`);
+      // For demo purposes, we'll just show a success message
+    alert("Successfully signed up with Google as " + googleUser.name + " (" + googleUser.email + ")");
     
     // Close the modal
     closeModal('google-signin-modal');

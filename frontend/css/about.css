@@ -128,7 +128,7 @@ nav li:last-child a:hover {
 /* Main content */
 .about-container {
     min-height: 100vh;
-    padding: 8rem 0 4rem;
+    padding: 2rem 0 4rem;
     background-color: #170f04;
 }
 

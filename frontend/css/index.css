@@ -217,6 +217,7 @@ footer {
     bottom: 2rem;
     left: 3rem;
     z-index: 3;
+    width: auto;
 }
 
 footer p {

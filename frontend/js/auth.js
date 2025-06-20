@@ -30,14 +30,19 @@
                 </div>
             `;
             if (loginLi) navList.replaceChild(li, loginLi);
-            
-            // logout handler
+              // logout handler
             li.querySelector('#logout-btn').addEventListener('click', (e) => {
                 e.preventDefault();
                 localStorage.removeItem('bhaatGhorUser');
                 localStorage.removeItem('bhaatGhorCart');
                 sessionStorage.removeItem('bhaatGhorCheckoutData');
-                window.location.href = 'login.html';
+                // Check if we're in pages folder or root
+                const isInPagesFolder = window.location.pathname.includes('/pages/');
+                if (isInPagesFolder) {
+                    window.location.href = 'login.html';
+                } else {
+                    window.location.href = 'pages/login.html';
+                }
             });
             
             // toggle dropdown

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - Bhaat Ghor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/checkout.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <main class="checkout-page">
+        <header>
+            <div class="hero-header">
+                <a href="../index.html" class="brand-logo">Bhaat Ghor</a>
+                <nav>
+                    <ul id="nav-list">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="menu.html">Menu</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="login.html">Log in</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h1>Account Settings</h1>
+            </div>
+
+            <div class="checkout-content">
+                <div class="checkout-form">
+                    <h2>Account Information</h2>
+                    <div class="account-info">
+                        <div class="info-item">
+                            <label>Account Type:</label>
+                            <span id="account-type">Google Account</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span id="account-email">user@example.com</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Member Since:</label>
+                            <span id="member-since">June 2025</span>
+                        </div>
+                    </div>
+
+                    <h2>Privacy Settings</h2>
+                    <form id="privacy-form">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="email-notifications" checked>
+                                Receive email notifications about orders
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="promotional-emails" checked>
+                                Receive promotional emails and offers
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="order-updates" checked>
+                                Receive SMS updates about order status
+                            </label>
+                        </div>
+                        <button type="submit" class="place-order-btn">Save Privacy Settings</button>
+                    </form>
+
+                    <h2 style="color: #ff6b6b;">Danger Zone</h2>
+                    <div class="danger-zone">
+                        <p>Deleting your account will permanently remove all your data, including order history, saved addresses, and preferences. This action cannot be undone.</p>
+                        <button id="delete-account-btn" class="delete-btn">Delete Account</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Bhaat Ghor. All rights reserved.</p>
+    </footer>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation-modal" class="order-confirmation" style="display: none;">
+        <div class="confirmation-content">
+            <i class="fas fa-exclamation-triangle" style="color: #ff6b6b;"></i>
+            <h2>Delete Account</h2>
+            <p>Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently removed.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <button id="confirm-delete-btn" class="delete-btn">Yes, Delete My Account</button>
+                <button id="cancel-delete-btn" class="return-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const userRaw = localStorage.getItem('bhaatGhorUser');
+            if (!userRaw) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = JSON.parse(userRaw);
+            
+            // Populate account info
+            document.getElementById('account-email').textContent = user.email || 'N/A';
+            document.getElementById('account-type').textContent = user.picture ? 'Google Account' : 'Phone Account';
+            
+            // Handle privacy form submission
+            document.getElementById('privacy-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Privacy settings saved successfully!');
+            });
+
+            // Handle delete account button
+            document.getElementById('delete-account-btn').addEventListener('click', function() {
+                document.getElementById('delete-confirmation-modal').style.display = 'flex';
+            });
+
+            // Handle confirm delete
+            document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+                // Clear all user data
+                localStorage.removeItem('bhaatGhorUser');
+                localStorage.removeItem('bhaatGhorCart');
+                localStorage.removeItem('bhaatGhorOrders');
+                sessionStorage.removeItem('bhaatGhorCheckoutData');
+                
+                alert('Your account has been deleted successfully.');
+                window.location.href = '../index.html';
+            });
+
+            // Handle cancel delete
+            document.getElementById('cancel-delete-btn').addEventListener('click', function() {
+                document.getElementById('delete-confirmation-modal').style.display = 'none';
+            });
+        });
+    </script>
+
+    <style>
+        .account-info {
+            background-color: rgba(21, 10, 1, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(212, 184, 150, 0.1);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: #d4b896;
+        }
+
+        .info-item span {
+            color: #f0dcbf;
+        }
+
+        .danger-zone {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .danger-zone p {
+            margin-bottom: 1rem;
+            color: rgba(240, 220, 191, 0.9);
+        }
+
+        .delete-btn {
+            background-color: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff5252;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+    </style>
+</body>
+</html>

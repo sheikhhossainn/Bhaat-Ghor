@@ -135,7 +135,7 @@
     <script>
         // User authentication and nav menu
         (function() {
-            const userRaw = sessionStorage.getItem('bhaatGhorUser');
+            const userRaw = localStorage.getItem('bhaatGhorUser');
             const navList = document.getElementById('nav-list');
             if (!navList) return;
             if (userRaw) {
@@ -155,7 +155,7 @@
                 navList.replaceChild(li, navList.lastElementChild);
                 document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('logout-btn').addEventListener('click', () => {
-                        sessionStorage.removeItem('bhaatGhorUser');
+                        localStorage.removeItem('bhaatGhorUser');
                         window.location.href = 'login.html';
                     });
                     document.getElementById('user-avatar').addEventListener('click', () => {
@@ -166,12 +166,12 @@
         })();
         document.addEventListener('DOMContentLoaded', function() {
             // Require login
-            if (!sessionStorage.getItem('bhaatGhorUser')) {
+            if (!localStorage.getItem('bhaatGhorUser')) {
                 window.location.href = 'login.html';
                 return;
             }
             // Pre-fill delivery info with user data
-            const user = JSON.parse(sessionStorage.getItem('bhaatGhorUser'));
+            const user = JSON.parse(localStorage.getItem('bhaatGhorUser'));
             document.getElementById('name').value = user.name || '';
             document.getElementById('email').value = user.email || '';
             // Get checkout data from sessionStorage
@@ -229,7 +229,7 @@
                     
                     // Clear cart
                     localStorage.removeItem('bhaatGhorCart');
-                    sessionStorage.removeItem('bhaatGhorCheckoutData');
+                    sessionStorage.removeItem('bhaatGhorCheckoutData'); // only checkout data
                 } else {
                     form.reportValidity();
                 }

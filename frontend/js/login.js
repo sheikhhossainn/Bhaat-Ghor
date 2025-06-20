@@ -124,8 +124,8 @@ function completeGoogleLogin() {
     // for verification and user authentication
       // For demo purposes, we'll just show a success message
     alert("Successfully logged in with Google as " + googleUser.name + " (" + googleUser.email + ")");
-    // Store user in sessionStorage
-    sessionStorage.setItem('bhaatGhorUser', JSON.stringify({
+    // Store user in localStorage for persistence across pages
+    localStorage.setItem('bhaatGhorUser', JSON.stringify({
         name: googleUser.name,
         email: googleUser.email,
         picture: googleUser.picture
@@ -202,10 +202,10 @@ function verifyCode() {
     // In a real implementation, you would verify this code with your backend
     // For demonstration purposes, we'll accept any code
     alert('Phone number verified successfully! You are now logged in.');
-    // Store user in sessionStorage with phone as identifier
+    // Store user in localStorage with phone as identifier
     const phone = codeInput.value; // actually revert to phoneInput value above
     const phoneNumber = document.getElementById('phone-number-input').value;
-    sessionStorage.setItem('bhaatGhorUser', JSON.stringify({
+    localStorage.setItem('bhaatGhorUser', JSON.stringify({
         name: phoneNumber,
         email: phoneNumber,
         picture: 'https://via.placeholder.com/40'

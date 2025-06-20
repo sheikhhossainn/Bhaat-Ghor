@@ -129,12 +129,18 @@ function completeGoogleLogin() {
         name: googleUser.name,
         email: googleUser.email,
         picture: googleUser.picture
-    }));
-    // Close the modal
+    }));    // Close the modal
     closeModal('google-signin-modal');
 
     setTimeout(() => {
-        window.location.href = '../index.html'; // Redirect to home page after successful login
+        // Check if there's a redirect URL stored
+        const redirectPath = sessionStorage.getItem('bhaatGhorRedirectAfterLogin');
+        if (redirectPath) {
+            sessionStorage.removeItem('bhaatGhorRedirectAfterLogin');
+            window.location.href = redirectPath;
+        } else {
+            window.location.href = '../index.html';
+        }
     }, 1000);
 }
 
@@ -201,17 +207,25 @@ function verifyCode() {
     
     // In a real implementation, you would verify this code with your backend
     // For demonstration purposes, we'll accept any code
-    alert('Phone number verified successfully! You are now logged in.');
-    // Store user in localStorage with phone as identifier
+    alert('Phone number verified successfully! You are now logged in.');    // Store user in localStorage with phone as identifier
     const phone = codeInput.value; // actually revert to phoneInput value above
     const phoneNumber = document.getElementById('phone-number-input').value;
     localStorage.setItem('bhaatGhorUser', JSON.stringify({
         name: phoneNumber,
         email: phoneNumber,
+        phone: phoneNumber,
         picture: 'https://via.placeholder.com/40'
     }));
     closeModal('phone-signin-modal');
-    window.location.href = '../index.html';
+    
+    // Check if there's a redirect URL stored
+    const redirectPath = sessionStorage.getItem('bhaatGhorRedirectAfterLogin');
+    if (redirectPath) {
+        sessionStorage.removeItem('bhaatGhorRedirectAfterLogin');
+        window.location.href = redirectPath;
+    } else {
+        window.location.href = '../index.html';
+    }
 }
 
 // Add event listener when the document is fully loaded
@@ -244,8 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
         console.error("Error setting up Google Sign-In:", error);
     }
-    
-    // Handle form submission
+      // Handle form submission
     const loginForm = document.querySelector('.login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', function(event) {
@@ -254,8 +267,24 @@ document.addEventListener('DOMContentLoaded', function() {
             // In a real implementation, you would validate credentials with your backend
             alert('Successfully logged in!');
             
-            // Redirect to home page
-            window.location.href = '../index.html';
+            // Get email/username from the form
+            const email = document.getElementById('username').value;
+            
+            // Store user information
+            localStorage.setItem('bhaatGhorUser', JSON.stringify({
+                name: email.split('@')[0],
+                email: email,
+                picture: 'https://via.placeholder.com/40'
+            }));
+            
+            // Check if there's a redirect URL stored
+            const redirectPath = sessionStorage.getItem('bhaatGhorRedirectAfterLogin');
+            if (redirectPath) {
+                sessionStorage.removeItem('bhaatGhorRedirectAfterLogin');
+                window.location.href = redirectPath;
+            } else {
+                window.location.href = '../index.html';
+            }
         });
     }
     

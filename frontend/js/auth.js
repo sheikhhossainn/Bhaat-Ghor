@@ -203,12 +203,12 @@ function showOrdersModal() {
 
 function getStatusColor(status) {
     switch(status.toLowerCase()) {
-        case 'processing': return '#ffa500';
-        case 'preparing': return '#2196f3';
-        case 'out for delivery': return '#ff9800';
-        case 'delivered': return '#4caf50';
-        case 'cancelled': return '#f44336';
-        default: return '#666';
+        case 'processing': return '#ffa500'; // orange
+        case 'preparing': return '#2196f3';  // blue
+        case 'out for delivery': return '#ff9800'; // amber
+        case 'delivered': return '#4caf50';  // green
+        case 'cancelled': return '#f44336';  // red
+        default: return '#666';              // gray
     }
 }
 
@@ -219,16 +219,63 @@ function updateOrderStatus(orderNumber) {
     if (orderIndex !== -1) {
         const statusOptions = ['Processing', 'Preparing', 'Out for Delivery', 'Delivered'];
         const currentStatus = orders[orderIndex].status;
-        const currentIndex = statusOptions.indexOf(currentStatus);
         
-        if (currentIndex < statusOptions.length - 1) {
-            orders[orderIndex].status = statusOptions[currentIndex + 1];
+        // If status is already Cancelled, don't allow further updates
+        if (currentStatus === 'Cancelled') {
+            alert('This order has been cancelled and cannot be updated.');
+            return;
+        }
+        
+        // Create a modal for status selection
+        const modal = document.createElement('div');
+        modal.id = 'status-update-modal';
+        modal.className = 'order-confirmation';
+        modal.style.display = 'flex';
+        
+        let statusOptionsHTML = '';
+        [...statusOptions, 'Cancelled'].forEach(status => {
+            statusOptionsHTML += `
+                <div style="margin: 10px 0;">
+                    <input type="radio" id="status-${status.toLowerCase().replace(/\s/g, '-')}" 
+                           name="order-status" value="${status}" 
+                           ${currentStatus === status ? 'checked' : ''}>
+                    <label for="status-${status.toLowerCase().replace(/\s/g, '-')}" 
+                           style="color: ${getStatusColor(status)}; padding-left: 8px;">
+                        ${status}
+                    </label>
+                </div>
+            `;
+        });
+        
+        modal.innerHTML = `
+            <div class="confirmation-content" style="max-width: 400px;">
+                <i class="fas fa-edit" style="color: #a65511;"></i>
+                <h2>Update Order Status</h2>
+                <p>Order #${orderNumber}</p>
+                <form id="status-update-form" style="text-align: left; margin: 20px 0;">
+                    ${statusOptionsHTML}
+                </form>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                    <button id="update-status-btn" class="return-btn">Update</button>
+                    <button id="cancel-status-update-btn" class="delete-btn" style="background: #666;">Cancel</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Add event listeners
+        document.getElementById('update-status-btn').addEventListener('click', () => {
+            const selectedStatus = document.querySelector('input[name="order-status"]:checked').value;
+            orders[orderIndex].status = selectedStatus;
             localStorage.setItem('bhaatGhorOrders', JSON.stringify(orders));
+            closeModal('status-update-modal');
             closeModal('orders-modal');
             showOrdersModal(); // Refresh the modal
-        } else {
-            alert('Order is already delivered!');
-        }
+        });
+        
+        document.getElementById('cancel-status-update-btn').addEventListener('click', () => {
+            closeModal('status-update-modal');
+        });
     }
 }
 
@@ -292,3 +339,33 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Debug function to show local storage data - can be used in developer console
+function debugBhaatGhor() {
+    const user = JSON.parse(localStorage.getItem('bhaatGhorUser') || '{}');
+    const cart = JSON.parse(localStorage.getItem('bhaatGhorCart') || '[]');
+    const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+    
+    console.log('--- Bhaat Ghor Debug Info ---');
+    console.log('User:', user);
+    console.log('Cart:', cart);
+    console.log('Orders:', orders);
+    console.log('------------------------');
+    
+    return {
+        user,
+        cart,
+        orders
+    };
+}
+
+// Make sure any new orders are displayed correctly
+document.addEventListener('DOMContentLoaded', function() {
+    // If we're on the checkout page and the confirmation is showing, save the order again to make sure it's in localStorage
+    if (window.location.pathname.includes('checkout.html') && document.getElementById('order-confirmation')?.style.display === 'flex') {
+        const orderNumber = document.getElementById('order-number')?.textContent;
+        if (orderNumber) {
+            console.log('Order confirmation displayed, order number:', orderNumber);
+        }
+    }
+});

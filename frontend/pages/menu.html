@@ -9,7 +9,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400..900;1,400..900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="../css/index.css">
         <link rel="stylesheet" href="../css/menu.css">
-        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
 
     <body>
@@ -20,11 +20,17 @@
                     <nav>
                         <ul>
                             <li><a href="../index.html">Home</a></li>
-                            <li><a href="menu.html">Menu</a></li>
+                            <li><a href="menu.html" class="active">Menu</a></li>
                             <li><a href="about.html">About</a></li>
                             <li><a href="contact.html">Contact</a></li>
                             <li><a href="login.html">Log in</a></li>
                         </ul>
+                        <div class="nav-cart-container">
+                            <a href="food-cart.html" class="cart-badge" aria-label="View Shopping Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="cart-count" id="cart-count">0</span>
+                            </a>
+                        </div>
                     </nav>
                 </div>
             </header>
@@ -226,7 +232,97 @@
                 <h3>No items found in this category</h3>
                 <p>Try selecting a different category to see our delicious offerings!</p>
             </div>
-        </main>        
+        </main>
+        
         <script src="../js/app.js"></script>
+        
+        <script>
+            // Cart functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                // Force cart icon to be visible with important styles
+                const cartBadge = document.querySelector('.cart-badge');
+                if (cartBadge) {
+                    cartBadge.style.setProperty('display', 'flex', 'important');
+                    cartBadge.style.setProperty('visibility', 'visible', 'important');
+                }
+                
+                // Load cart from localStorage
+                const cartItems = JSON.parse(localStorage.getItem('bhaatGhorCart')) || [];
+                updateCartCount(cartItems.length);
+                
+                // Add event listeners to all "Add to Cart" buttons
+                document.querySelectorAll('.add-to-cart').forEach(button => {
+                    button.addEventListener('click', function() {
+                        // Get item details
+                        const menuItem = this.closest('.menu-item');
+                        const itemName = menuItem.querySelector('.menu-item-title').textContent;
+                        const itemPriceText = menuItem.querySelector('.menu-item-price').textContent;
+                        const itemPrice = parseInt(itemPriceText.substring(1)); // Remove ৳ symbol
+                        const itemImage = menuItem.querySelector('.menu-item-image').getAttribute('src');
+                        const itemDescription = menuItem.querySelector('.menu-item-description').textContent;
+                        const itemId = createItemId(itemName); // Create unique ID based on name
+                        
+                        // Check if item is already in cart
+                        const cartItems = JSON.parse(localStorage.getItem('bhaatGhorCart')) || [];
+                        const existingItemIndex = cartItems.findIndex(item => item.id === itemId);
+                        
+                        if (existingItemIndex !== -1) {
+                            // Increase quantity if item exists
+                            cartItems[existingItemIndex].quantity += 1;
+                        } else {
+                            // Add new item to cart
+                            cartItems.push({
+                                id: itemId,
+                                name: itemName,
+                                price: itemPrice,
+                                image: itemImage,
+                                description: itemDescription,
+                                quantity: 1
+                            });
+                        }
+                        
+                        // Save cart to localStorage
+                        localStorage.setItem('bhaatGhorCart', JSON.stringify(cartItems));
+                        
+                        // Update cart count
+                        updateCartCount(cartItems.length);
+                        
+                        // Provide feedback to user
+                        this.innerHTML = 'Added to Cart <i class="fas fa-check"></i>';
+                        this.style.backgroundColor = '#27AE60';
+                        
+                        // Reset button after delay
+                        setTimeout(() => {
+                            this.innerHTML = 'Add to Cart <i class="fas fa-shopping-cart"></i>';
+                            this.style.backgroundColor = '';
+                        }, 2000);
+                    });
+                });
+                
+                // Helper function to create a unique ID for items
+                function createItemId(name) {
+                    return name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                }
+                
+                // Update cart count badge
+                function updateCartCount(count) {
+                    const cartCountElement = document.getElementById('cart-count');
+                    if (cartCountElement) {
+                        const totalItems = JSON.parse(localStorage.getItem('bhaatGhorCart') || '[]').reduce((total, item) => total + item.quantity, 0);
+                        cartCountElement.textContent = totalItems;
+                        
+                        // Make sure cart badge/icon is always visible with important flag
+                        const cartBadge = document.querySelector('.cart-badge');
+                        if (cartBadge) {
+                            cartBadge.style.setProperty('display', 'flex', 'important');
+                            cartBadge.style.setProperty('visibility', 'visible', 'important');
+                        }
+                        
+                        // Only show count when there are items
+                        cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
+                    }
+                }
+            });
+        </script>
     </body>
 </html>

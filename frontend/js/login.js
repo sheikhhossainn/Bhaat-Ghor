@@ -124,11 +124,15 @@ function completeGoogleLogin() {
     // for verification and user authentication
       // For demo purposes, we'll just show a success message
     alert("Successfully logged in with Google as " + googleUser.name + " (" + googleUser.email + ")");
+    // Store user in sessionStorage
+    sessionStorage.setItem('bhaatGhorUser', JSON.stringify({
+        name: googleUser.name,
+        email: googleUser.email,
+        picture: googleUser.picture
+    }));
     // Close the modal
     closeModal('google-signin-modal');
-    
-    // In a real implementation, you would authenticate with the Google profile data
-    // and then redirect to the appropriate page
+
     setTimeout(() => {
         window.location.href = '../index.html'; // Redirect to home page after successful login
     }, 1000);
@@ -198,14 +202,16 @@ function verifyCode() {
     // In a real implementation, you would verify this code with your backend
     // For demonstration purposes, we'll accept any code
     alert('Phone number verified successfully! You are now logged in.');
-    
-    // Close the modal
+    // Store user in sessionStorage with phone as identifier
+    const phone = codeInput.value; // actually revert to phoneInput value above
+    const phoneNumber = document.getElementById('phone-number-input').value;
+    sessionStorage.setItem('bhaatGhorUser', JSON.stringify({
+        name: phoneNumber,
+        email: phoneNumber,
+        picture: 'https://via.placeholder.com/40'
+    }));
     closeModal('phone-signin-modal');
-    
-    // Redirect to home page after successful verification
-    setTimeout(() => {
-        window.location.href = '../index.html';
-    }, 1000);
+    window.location.href = '../index.html';
 }
 
 // Add event listener when the document is fully loaded

@@ -9,37 +9,50 @@
             const loginLi = navList.querySelector('li:last-child');
             const li = document.createElement('li');
             li.id = 'user-menu';
-            li.className = 'user-menu-item';            
-            li.innerHTML = `
+            li.className = 'user-menu-item';              li.innerHTML = `
                 <div class="user-dropdown">
                     <img src="${user.picture || 'https://via.placeholder.com/40'}" id="user-avatar" class="user-avatar" alt="Profile">
                     <div class="dropdown-menu" id="dropdown-menu">
-                        <a href="#" id="profile-btn" class="dropdown-item">
+                        <button id="profile-btn" class="dropdown-item">
                             <i class="fas fa-user"></i>
                             Profile Settings
-                        </a>
-                        <a href="#" id="account-btn" class="dropdown-item">
+                        </button>
+                        <button id="orders-btn" class="dropdown-item">
+                            <i class="fas fa-receipt"></i>
+                            Orders
+                        </button>
+                        <button id="account-btn" class="dropdown-item">
                             <i class="fas fa-cog"></i>
                             Account Settings
-                        </a>
-                        <a href="#" id="logout-btn" class="dropdown-item">
+                        </button>
+                        <button id="logout-btn" class="dropdown-item">
                             <i class="fas fa-sign-out-alt"></i>
                             Logout
-                        </a>
+                        </button>
                     </div>
-                </div>            `;
+                </div>
+            `;
             if (loginLi) navList.replaceChild(li, loginLi);
             
             // Profile settings handler
             li.querySelector('#profile-btn').addEventListener('click', (e) => {
                 e.preventDefault();
                 showProfileModal();
+                document.getElementById('dropdown-menu').classList.remove('show');
+            });
+            
+            // Orders handler
+            li.querySelector('#orders-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                showOrdersModal();
+                document.getElementById('dropdown-menu').classList.remove('show');
             });
             
             // Account settings handler
             li.querySelector('#account-btn').addEventListener('click', (e) => {
                 e.preventDefault();
                 showAccountModal();
+                document.getElementById('dropdown-menu').classList.remove('show');
             });
             
             // logout handler
@@ -139,6 +152,84 @@ function showAccountModal() {
         </div>
     `;
     document.body.appendChild(modal);
+}
+
+function showOrdersModal() {
+    const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+    const modal = document.createElement('div');
+    modal.id = 'orders-modal';
+    modal.className = 'order-confirmation';
+    modal.style.display = 'flex';
+    
+    let ordersHTML = '';
+    if (orders.length === 0) {
+        ordersHTML = '<p style="color: #f0dcbf; text-align: center; margin: 20px 0;">No orders yet. <a href="menu.html" style="color: #d4b896;">Start ordering!</a></p>';
+    } else {
+        ordersHTML = orders.map(order => `
+            <div style="background: rgba(21, 10, 1, 0.3); border: 1px solid #d4b896; border-radius: 8px; padding: 15px; margin: 10px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="color: #d4b896; margin: 0;">Order #${order.orderNumber}</h4>
+                    <span style="background: ${getStatusColor(order.status)}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px;">${order.status}</span>
+                </div>
+                <p style="color: #f0dcbf; margin: 5px 0;"><strong>Date:</strong> ${order.date}</p>
+                <p style="color: #f0dcbf; margin: 5px 0;"><strong>Total:</strong> ৳${order.total}</p>
+                <p style="color: #f0dcbf; margin: 5px 0;"><strong>Items:</strong> ${order.items ? order.items.length : 0} items</p>
+                ${order.items ? order.items.map(item => `
+                    <div style="font-size: 14px; color: rgba(240, 220, 191, 0.8); margin-left: 10px;">
+                        • ${item.name} x${item.quantity}
+                    </div>
+                `).join('') : ''}
+                <div style="margin-top: 10px;">
+                    <button onclick="updateOrderStatus('${order.orderNumber}')" class="return-btn" style="padding: 6px 12px; font-size: 12px;">Update Status</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    modal.innerHTML = `
+        <div class="confirmation-content" style="max-width: 700px; max-height: 80vh; overflow-y: auto;">
+            <i class="fas fa-receipt" style="color: #a65511;"></i>
+            <h2>My Orders</h2>
+            <div style="text-align: left; margin: 20px 0;">
+                ${ordersHTML}
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <button onclick="closeModal('orders-modal')" class="return-btn">Close</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function getStatusColor(status) {
+    switch(status.toLowerCase()) {
+        case 'processing': return '#ffa500';
+        case 'preparing': return '#2196f3';
+        case 'out for delivery': return '#ff9800';
+        case 'delivered': return '#4caf50';
+        case 'cancelled': return '#f44336';
+        default: return '#666';
+    }
+}
+
+function updateOrderStatus(orderNumber) {
+    const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+    const orderIndex = orders.findIndex(order => order.orderNumber === orderNumber);
+    
+    if (orderIndex !== -1) {
+        const statusOptions = ['Processing', 'Preparing', 'Out for Delivery', 'Delivered'];
+        const currentStatus = orders[orderIndex].status;
+        const currentIndex = statusOptions.indexOf(currentStatus);
+        
+        if (currentIndex < statusOptions.length - 1) {
+            orders[orderIndex].status = statusOptions[currentIndex + 1];
+            localStorage.setItem('bhaatGhorOrders', JSON.stringify(orders));
+            closeModal('orders-modal');
+            showOrdersModal(); // Refresh the modal
+        } else {
+            alert('Order is already delivered!');
+        }
+    }
 }
 
 function saveProfile() {

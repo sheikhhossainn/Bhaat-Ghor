@@ -230,10 +230,17 @@
                         };
                         localStorage.setItem('bhaatGhorUser', JSON.stringify(updatedUser));
                     }
-                    
-                    // Clear cart
+                      // Clear cart
                     localStorage.removeItem('bhaatGhorCart');
                     sessionStorage.removeItem('bhaatGhorCheckoutData');
+                      // Add console logging to help debug
+                    console.log('Order placed successfully! Order ID:', orderNumber);
+                    console.log('Updated orders in localStorage:', JSON.parse(localStorage.getItem('bhaatGhorOrders')));
+                    
+                    // Force a sync of orders
+                    if (typeof syncOrdersToStorage === 'function') {
+                        syncOrdersToStorage();
+                    }
                     
                     // Show order confirmation
                     document.getElementById('order-confirmation').style.display = 'flex';

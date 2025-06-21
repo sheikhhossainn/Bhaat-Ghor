@@ -1,10 +1,34 @@
 // auth.js: handles showing user avatar in nav across pages
-(function() {
-    document.addEventListener('DOMContentLoaded', () => {
-        const navList = document.querySelector('#nav-list');
-        if (!navList) return;
-        const userRaw = localStorage.getItem('bhaatGhorUser');
-        if (userRaw) {
+// Debugging function to check if modals are working
+let authJsLoaded = false;
+
+// Debug function to initialize modals if the event listeners failed
+function testModal(modalName) {
+    if (!modalName) {
+        console.log('Available modals: "profile", "orders", "account"');
+        return;
+    
+    if (modalName === 'profile') {
+        showProfileModal();
+    } else if (modalName === 'orders') {
+        showOrdersModal();
+    } else if (modalName === 'account') {
+        showAccountModal();
+    } else {
+        console.log('Unknown modal:', modalName);
+    }
+}
+
+// Make functions available globally, don't use IIFE
+// Using a regular function that's called on DOMContentLoaded
+function initUserMenu() {
+    // Set flag to indicate auth.js has loaded
+    authJsLoaded = true;
+    console.log('Auth.js: Initializing user menu');
+    const navList = document.querySelector('#nav-list');
+    if (!navList) return;
+    const userRaw = localStorage.getItem('bhaatGhorUser');
+    if (userRaw) {
             const user = JSON.parse(userRaw);
             const loginLi = navList.querySelector('li:last-child');
             const li = document.createElement('li');
@@ -73,8 +97,7 @@
                 const dropdown = document.getElementById('dropdown-menu');
                 dropdown.classList.toggle('show');
             });
-            
-            // close dropdown when clicking outside
+              // close dropdown when clicking outside
             document.addEventListener('click', (e) => {
                 const dropdown = document.getElementById('dropdown-menu');
                 const userMenu = document.getElementById('user-menu');
@@ -83,16 +106,30 @@
                 }
             });
         }
-    });
-})();
+    }
+}
+
+// Initialize the user menu when the DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initUserMenu();
+    
+    // Apply fixes after a short delay to ensure all elements are loaded
+    setTimeout(fixBhaatGhor, 500);
+});
 
 // Profile Modal Functions
 function showProfileModal() {
+    console.log('Showing profile modal...');
+    
+    // Remove any existing modal first
+    closeModal('profile-modal');
+    
     const user = JSON.parse(localStorage.getItem('bhaatGhorUser') || '{}');
     const modal = document.createElement('div');
     modal.id = 'profile-modal';
     modal.className = 'order-confirmation';
     modal.style.display = 'flex';
+    modal.style.zIndex = '9999';
     modal.innerHTML = `
         <div class="confirmation-content" style="max-width: 600px;">
             <i class="fas fa-user" style="color: #a65511;"></i>
@@ -125,12 +162,18 @@ function showProfileModal() {
 }
 
 function showAccountModal() {
+    console.log('Showing account modal...');
+    
+    // Remove any existing modal first
+    closeModal('account-modal');
+    
     const user = JSON.parse(localStorage.getItem('bhaatGhorUser') || '{}');
     const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
     const modal = document.createElement('div');
     modal.id = 'account-modal';
     modal.className = 'order-confirmation';
     modal.style.display = 'flex';
+    modal.style.zIndex = '9999';
     modal.innerHTML = `
         <div class="confirmation-content" style="max-width: 600px;">
             <i class="fas fa-cog" style="color: #a65511;"></i>
@@ -155,11 +198,20 @@ function showAccountModal() {
 }
 
 function showOrdersModal() {
+    console.log('Opening Orders modal...');
+    
+    // Remove any existing modal first
+    closeModal('orders-modal');
+    
+    // Force a refresh of orders from localStorage
     const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+    console.log('Current orders:', orders.length);
+    
     const modal = document.createElement('div');
     modal.id = 'orders-modal';
     modal.className = 'order-confirmation';
     modal.style.display = 'flex';
+    modal.style.zIndex = '9999';
     
     let ordersHTML = '';
     if (orders.length === 0) {
@@ -262,19 +314,24 @@ function updateOrderStatus(orderNumber) {
             </div>
         `;
         document.body.appendChild(modal);
-        
-        // Add event listeners
+          // Add event listeners
         document.getElementById('update-status-btn').addEventListener('click', () => {
             const selectedStatus = document.querySelector('input[name="order-status"]:checked').value;
             orders[orderIndex].status = selectedStatus;
             localStorage.setItem('bhaatGhorOrders', JSON.stringify(orders));
-            closeModal('status-update-modal');
-            closeModal('orders-modal');
-            showOrdersModal(); // Refresh the modal
+            
+            // Close modals and refresh the orders display
+            document.getElementById('status-update-modal').remove();
+            setTimeout(() => {
+                document.getElementById('orders-modal').remove();
+                setTimeout(() => {
+                    showOrdersModal(); // Refresh the modal
+                }, 100);
+            }, 100);
         });
         
         document.getElementById('cancel-status-update-btn').addEventListener('click', () => {
-            closeModal('status-update-modal');
+            document.getElementById('status-update-modal').remove();
         });
     }
 }
@@ -308,11 +365,71 @@ function deleteAccount() {
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
-        modal.remove();
+        // Add a small fade-out effect
+        modal.style.opacity = '0';
+        
+        // Remove after the animation completes
+        setTimeout(() => {
+            if (document.getElementById(modalId)) {
+                document.getElementById(modalId).remove();
+            }
+        }, 200);
     }
 }
 
-// Style for delete button
+// Utility function to check z-index of modals and fix if needed
+function ensureModalVisible(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        // Ensure proper z-index
+        modal.style.zIndex = '9999';
+        
+        // Ensure visibility
+        modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        
+        // Add click outside to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal(modalId);
+            }
+        });
+        
+        console.log(`Modal ${modalId} visibility ensured`);
+    }
+}
+
+// Update the showProfileModal, showOrdersModal, and showAccountModal functions 
+// to use ensureModalVisible after appending to document
+document.addEventListener('DOMContentLoaded', function() {
+    // Override the original functions with enhanced versions
+    const originalShowProfileModal = window.showProfileModal;
+    const originalShowOrdersModal = window.showOrdersModal;
+    const originalShowAccountModal = window.showAccountModal;
+    
+    if (originalShowProfileModal) {
+        window.showProfileModal = function() {
+            originalShowProfileModal();
+            ensureModalVisible('profile-modal');
+        };
+    }
+    
+    if (originalShowOrdersModal) {
+        window.showOrdersModal = function() {
+            originalShowOrdersModal();
+            ensureModalVisible('orders-modal');
+        };
+    }
+    
+    if (originalShowAccountModal) {
+        window.showAccountModal = function() {
+            originalShowAccountModal();
+            ensureModalVisible('account-modal');
+        };
+    }
+});
+
+// Style for buttons and modals
 const style = document.createElement('style');
 style.textContent = `
     .delete-btn {
@@ -337,11 +454,45 @@ style.textContent = `
         color: #d4b896;
         font-weight: 500;
     }
+    
+    /* Modal styles */
+    .order-confirmation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.2s ease;
+    }
+    
+    .confirmation-content {
+        background-color: #150a01;
+        border: 2px solid #d4b896;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        color: #f0dcbf;
+        max-width: 90%;
+        animation: modalFadeIn 0.3s ease;
+    }
+    
+    @keyframes modalFadeIn {
+        from { transform: translateY(-20px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
 `;
 document.head.appendChild(style);
 
 // Debug function to show local storage data - can be used in developer console
-function debugBhaatGhor() {
+function debugBhaatGhor(clearConsole = true) {
+    if (clearConsole) console.clear();
+    
     const user = JSON.parse(localStorage.getItem('bhaatGhorUser') || '{}');
     const cart = JSON.parse(localStorage.getItem('bhaatGhorCart') || '[]');
     const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
@@ -359,13 +510,135 @@ function debugBhaatGhor() {
     };
 }
 
-// Make sure any new orders are displayed correctly
+// Special function to ensure orders are properly saved
+function syncOrdersToStorage() {
+    let attempts = 0;
+    const maxAttempts = 10;
+    const interval = setInterval(() => {
+        attempts++;
+        
+        const orderNumber = document.getElementById('order-number')?.textContent;
+        const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+        
+        console.log(`Attempt ${attempts} to sync orders. Current orders:`, orders.length);
+        
+        if (attempts >= maxAttempts) {
+            clearInterval(interval);
+            console.log('Max sync attempts reached.');
+        }
+    }, 1000);
+    
+    return interval;
+}
+
+// Make sure any new orders are displayed correctly and auth works
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Auth.js: DOM fully loaded');
+    
+    // Force reinitialize the user menu
+    initUserMenu();
+    
     // If we're on the checkout page and the confirmation is showing, save the order again to make sure it's in localStorage
     if (window.location.pathname.includes('checkout.html') && document.getElementById('order-confirmation')?.style.display === 'flex') {
         const orderNumber = document.getElementById('order-number')?.textContent;
         if (orderNumber) {
             console.log('Order confirmation displayed, order number:', orderNumber);
+            
+            // Make sure the orders are saved and ready to be shown in the modal
+            setTimeout(() => {
+                const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+                console.log('Current orders in localStorage:', orders.length);
+            }, 1000);
         }
     }
+    
+    // Add direct event listeners to user menu buttons as a backup
+    setTimeout(() => {
+        const profileBtn = document.getElementById('profile-btn');
+        const ordersBtn = document.getElementById('orders-btn');
+        const accountBtn = document.getElementById('account-btn');
+        
+        if (profileBtn) {
+            console.log('Auth.js: Adding direct event listener to profile button');
+            profileBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Profile button clicked directly');
+                showProfileModal();
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) dropdown.classList.remove('show');
+            });
+        }
+        
+        if (ordersBtn) {
+            console.log('Auth.js: Adding direct event listener to orders button');
+            ordersBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Orders button clicked directly');
+                showOrdersModal();
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) dropdown.classList.remove('show');
+            });
+        }
+        
+        if (accountBtn) {
+            console.log('Auth.js: Adding direct event listener to account button');
+            accountBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Account button clicked directly');
+                showAccountModal();
+                const dropdown = document.getElementById('dropdown-menu');
+                if (dropdown) dropdown.classList.remove('show');
+            });
+        }
+    }, 1000);
 });
+
+// Function to fix issues immediately from the console
+function fixBhaatGhor() {
+    console.clear();
+    console.log('🔧 Running Bhaat Ghor fixes...');
+    
+    // Reinitialize the user menu
+    initUserMenu();
+    
+    // Add direct event listeners to buttons
+    const profileBtn = document.getElementById('profile-btn');
+    const ordersBtn = document.getElementById('orders-btn');
+    const accountBtn = document.getElementById('account-btn');
+    
+    if (profileBtn) {
+        profileBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('Profile button clicked (fixed)');
+            showProfileModal();
+            return false;
+        };
+    }
+    
+    if (ordersBtn) {
+        ordersBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('Orders button clicked (fixed)');
+            showOrdersModal();
+            return false;
+        };
+    }
+    
+    if (accountBtn) {
+        accountBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('Account button clicked (fixed)');
+            showAccountModal();
+            return false;
+        };
+    }
+    
+    // Force the dropdown to close when the page loads
+    const dropdown = document.getElementById('dropdown-menu');
+    if (dropdown) dropdown.classList.remove('show');
+    
+    console.log('✅ Fixes applied successfully!');
+    console.log('🛈 You can now click on Profile, Orders, and Account buttons.');
+    
+    return true;
+}

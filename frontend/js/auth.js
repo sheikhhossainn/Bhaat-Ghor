@@ -7,6 +7,7 @@ function testModal(modalName) {
     if (!modalName) {
         console.log('Available modals: "profile", "orders", "account"');
         return;
+    }
     
     if (modalName === 'profile') {
         showProfileModal();
@@ -25,10 +26,25 @@ function initUserMenu() {
     // Set flag to indicate auth.js has loaded
     authJsLoaded = true;
     console.log('Auth.js: Initializing user menu');
+    
+    // Find the navigation list
     const navList = document.querySelector('#nav-list');
-    if (!navList) return;
+    if (!navList) {
+        console.error('Nav list not found!');
+        return;
+    }
+    
+    console.log('Nav list found, checking for user login...');
+    
+    // Check if user is logged in
     const userRaw = localStorage.getItem('bhaatGhorUser');
+    
+    // Log authentication status
+    console.log('User authentication status:', userRaw ? 'Logged in' : 'Not logged in');
+    
     if (userRaw) {
+        // User is logged in
+        try {
             const user = JSON.parse(userRaw);
             const loginLi = navList.querySelector('li:last-child');
             const li = document.createElement('li');
@@ -103,9 +119,12 @@ function initUserMenu() {
                 const userMenu = document.getElementById('user-menu');
                 if (dropdown && userMenu && !userMenu.contains(e.target)) {
                     dropdown.classList.remove('show');
-                }
-            });
+                }            });
+        } catch (err) {
+            console.error('Error setting up user menu:', err);
         }
+    } else {
+        console.log('User not logged in, showing login button');
     }
 }
 
@@ -598,8 +617,16 @@ function fixBhaatGhor() {
     console.clear();
     console.log('🔧 Running Bhaat Ghor fixes...');
     
-    // Reinitialize the user menu
-    initUserMenu();
+    // Check if user is logged in
+    const userRaw = localStorage.getItem('bhaatGhorUser');
+    console.log('User authentication status:', userRaw ? 'Logged in' : 'Not logged in');
+    
+    if (userRaw) {
+        console.log('User data found:', JSON.parse(userRaw));
+    }
+    
+    // Force recreate the user menu
+    forceCreateUserMenu();
     
     // Add direct event listeners to buttons
     const profileBtn = document.getElementById('profile-btn');
@@ -639,6 +666,127 @@ function fixBhaatGhor() {
     
     console.log('✅ Fixes applied successfully!');
     console.log('🛈 You can now click on Profile, Orders, and Account buttons.');
+    
+    return true;
+}
+
+// Function to force create the user menu
+function forceCreateUserMenu() {
+    console.log('Force creating user menu...');
+    
+    // Check if user is logged in
+    const userRaw = localStorage.getItem('bhaatGhorUser');
+    if (!userRaw) {
+        console.log('No user data found in localStorage');
+        return false;
+    }
+    
+    // Parse user data
+    const user = JSON.parse(userRaw);
+    console.log('User found:', user.name);
+    
+    // Find navigation list
+    const navList = document.querySelector('#nav-list');
+    if (!navList) {
+        console.error('Nav list not found!');
+        return false;
+    }
+    
+    // Find the login link
+    const loginLi = navList.querySelector('li:last-child');
+    if (!loginLi) {
+        console.error('Login list item not found!');
+        return false;
+    }
+    
+    // Check if login link contains "Log in" text
+    const loginLink = loginLi.querySelector('a');
+    if (loginLink && !loginLink.textContent.includes('Log in') && !loginLink.href.includes('login.html')) {
+        console.log('Login link already replaced with user menu');
+        return true;
+    }
+    
+    // Create the user menu
+    const li = document.createElement('li');
+    li.id = 'user-menu';
+    li.className = 'user-menu-item';
+    li.innerHTML = `
+        <div class="user-dropdown">
+            <img src="${user.picture || 'https://via.placeholder.com/40'}" id="user-avatar" class="user-avatar" alt="Profile">
+            <div class="dropdown-menu" id="dropdown-menu">
+                <button id="profile-btn" class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    Profile Settings
+                </button>
+                <button id="orders-btn" class="dropdown-item">
+                    <i class="fas fa-receipt"></i>
+                    Orders
+                </button>
+                <button id="account-btn" class="dropdown-item">
+                    <i class="fas fa-cog"></i>
+                    Account Settings
+                </button>
+                <button id="logout-btn" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Replace login link with user menu
+    navList.replaceChild(li, loginLi);
+    console.log('User menu created successfully!');
+    
+    // Add event listeners
+    // Profile settings handler
+    li.querySelector('#profile-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        showProfileModal();
+        document.getElementById('dropdown-menu').classList.remove('show');
+    });
+    
+    // Orders handler
+    li.querySelector('#orders-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        showOrdersModal();
+        document.getElementById('dropdown-menu').classList.remove('show');
+    });
+    
+    // Account settings handler
+    li.querySelector('#account-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        showAccountModal();
+        document.getElementById('dropdown-menu').classList.remove('show');
+    });
+    
+    // logout handler
+    li.querySelector('#logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('bhaatGhorUser');
+            localStorage.removeItem('bhaatGhorCart');
+            sessionStorage.removeItem('bhaatGhorCheckoutData');
+            // Just reload the page to show login button again
+            window.location.reload();
+        }
+    });
+    
+    // toggle dropdown
+    li.querySelector('#user-avatar').addEventListener('click', (e) => {
+        e.preventDefault();
+        const dropdown = document.getElementById('dropdown-menu');
+        dropdown.classList.toggle('show');
+    });
+    
+    // close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const dropdown = document.getElementById('dropdown-menu');
+        const userMenu = document.getElementById('user-menu');
+        if (dropdown && userMenu && !userMenu.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
     
     return true;
 }

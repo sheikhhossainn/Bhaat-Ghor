@@ -134,9 +134,18 @@
         </div>
     </div>    <script>
         // Authentication is now handled by auth.js
-        document.addEventListener('DOMContentLoaded', function() {            // Require login
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Checkout page loaded");
+            
+            // Force create user menu first
+            if (typeof forceCreateUserMenu === 'function') {
+                forceCreateUserMenu();
+            }
+            
+            // Require login
             if (!localStorage.getItem('bhaatGhorUser')) {
                 // Store the current path to redirect back after login
+                console.log("No user found, redirecting to login");
                 sessionStorage.setItem('bhaatGhorRedirectAfterLogin', window.location.pathname);
                 window.location.href = 'login.html';
                 return;
@@ -241,11 +250,27 @@
                     if (typeof syncOrdersToStorage === 'function') {
                         syncOrdersToStorage();
                     }
-                    
-                    // Show order confirmation
+                      // Show order confirmation
                     document.getElementById('order-confirmation').style.display = 'flex';
                 } else {
                     form.reportValidity();
+                }
+            });
+            
+            // Monitor for login state changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'bhaatGhorUser') {
+                    console.log('User login state changed');
+                    if (e.newValue) {
+                        console.log('User logged in');
+                        // Force refresh user menu
+                        if (typeof forceCreateUserMenu === 'function') {
+                            forceCreateUserMenu();
+                        }
+                    } else {
+                        console.log('User logged out');
+                        window.location.reload();
+                    }
                 }
             });
         });

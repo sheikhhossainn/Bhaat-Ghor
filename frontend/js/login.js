@@ -287,8 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Close modal when clicking outside of it
+      // Close modal when clicking outside of it
     window.addEventListener('click', function(event) {
         const googleModal = document.getElementById('google-signin-modal');
         const phoneModal = document.getElementById('phone-signin-modal');
@@ -301,4 +300,17 @@ document.addEventListener('DOMContentLoaded', function() {
             closeModal('phone-signin-modal');
         }
     });
+    
+    // Check if user is already logged in and redirect if needed
+    const userRaw = localStorage.getItem('bhaatGhorUser');
+    if (userRaw) {
+        console.log('User already logged in, redirecting...');
+        const redirectPath = sessionStorage.getItem('bhaatGhorRedirectAfterLogin');
+        if (redirectPath) {
+            sessionStorage.removeItem('bhaatGhorRedirectAfterLogin');
+            window.location.href = redirectPath;
+        } else {
+            window.location.href = '../index.html';
+        }
+    }
 });

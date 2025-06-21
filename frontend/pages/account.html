@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
     <main class="checkout-page">
         <header>
@@ -110,11 +112,11 @@
             }
 
             const user = JSON.parse(userRaw);
-            
+
             // Populate account info
             document.getElementById('account-email').textContent = user.email || 'N/A';
             document.getElementById('account-type').textContent = user.picture ? 'Google Account' : 'Phone Account';
-            
+
             // Handle privacy form submission
             document.getElementById('privacy-form').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -133,7 +135,7 @@
                 localStorage.removeItem('bhaatGhorCart');
                 localStorage.removeItem('bhaatGhorOrders');
                 sessionStorage.removeItem('bhaatGhorCheckoutData');
-                
+
                 alert('Your account has been deleted successfully.');
                 window.location.href = '../index.html';
             });
@@ -214,4 +216,5 @@
         }
     </style>
 </body>
+
 </html>

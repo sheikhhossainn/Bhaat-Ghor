@@ -168,10 +168,13 @@ nav li:last-child a:hover {
 
 .cart-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 1.5rem 0;
     border-bottom: 1px solid rgba(240, 220, 191, 0.2);
     margin-bottom: 1rem;
+    position: relative;
+    min-height: 140px;
+    height: 150px;
 }
 
 .cart-item-image {
@@ -184,6 +187,10 @@ nav li:last-child a:hover {
 
 .cart-item-details {
     flex: 1;
+    width: calc(100% - 300px);
+    max-width: 500px;
+    padding-right: 0;
+    box-sizing: border-box;
 }
 
 .cart-item-title {
@@ -199,19 +206,36 @@ nav li:last-child a:hover {
     color: #e2c9a1;
     font-weight: 600;
     text-align: right;
+    position: absolute !important;
+    right: 0 !important;
+    bottom: 30px !important;
+    width: 150px !important;
+    font-family: 'Poppins', sans-serif;
 }
 
 .cart-item-description {
     font-size: 1rem;
     color: #a99275;
     margin-bottom: 0.5rem;
-    max-width: 80%;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-height: 2.5rem;
 }
 
 .cart-item-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: absolute !important;
+    right: 0 !important;
+    top: 30px !important;
+    width: 150px !important;
+    transform: none !important;
 }
 
 .quantity-control {
@@ -298,6 +322,7 @@ nav li:last-child a:hover {
 .summary-line span:last-child {
     color: #e2c9a1;
     font-weight: 600;
+    font-family: 'Poppins', sans-serif;
 }
 
 .total-line {
@@ -312,7 +337,7 @@ nav li:last-child a:hover {
     font-size: 2rem;
     font-weight: 600;
     color: #e2c9a1;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .checkout-btn {
@@ -376,6 +401,53 @@ footer p {
     opacity: 0.7;
 }
 
+/* Consistent font styling for all currency symbols */
+.cart-item-price, 
+#subtotal, 
+#delivery, 
+#tax, 
+#total,
+.summary-line span:last-child,
+.total-line span {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* Fixed position overrides */
+.cart-item {
+    height: 150px;
+}
+
+.cart-item-actions {
+    position: absolute !important;
+    right: 0 !important;
+    top: 30px !important;
+    width: 150px !important;
+    transform: none !important;
+}
+
+.cart-item-price {
+    position: absolute !important;
+    right: 0 !important;
+    bottom: 30px !important;
+    width: 150px !important;
+}
+
+/* Override mobile styles to ensure consistent placement */
+@media (max-width: 768px) {
+    .cart-item {
+        min-height: 150px;
+        padding-bottom: 0;
+    }
+    
+    .cart-item-actions {
+        top: 30px !important;
+    }
+    
+    .cart-item-price {
+        bottom: 30px !important;
+    }
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .hero-header {
@@ -410,6 +482,14 @@ footer p {
         padding: 0.5rem 2rem;
         width: auto;
     }
+    .cart-item-details {
+        padding-right: 0;
+        width: 100%;
+    }
+    
+    .cart-item-actions {
+        right: 0;
+    }
 }
 
 @media (max-width: 480px) {
@@ -428,21 +508,65 @@ footer p {
     
     nav a {
         font-size: 1rem;
-    }.cart-item {
+    }
+    
+    .cart-item {
         flex-direction: column;
         align-items: flex-start;
+        padding-bottom: 6rem;
+        min-height: 180px;
     }
     
     .cart-item-image {
-        width: 100%;
-        height: auto;
+        width: 100px;
+        height: 100px;
         margin-right: 0;
         margin-bottom: 1rem;
     }
     
-    .cart-item-actions {
+    .cart-item-details {
         width: 100%;
-        justify-content: space-between;
-        margin-top: 1rem;
+        padding-right: 0;
+    }
+    
+    .cart-item-actions {
+        position: absolute;
+        width: 150px;
+        bottom: 60px;
+        right: 0;
+        top: auto;
+        justify-content: flex-end;
+    }
+    
+    .cart-item-price {
+        bottom: 20px;
+        width: 150px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .cart-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+    
+    .cart-item-details {
+        width: calc(100% - 270px);
+        padding-right: 0;
+    }
+    
+    .cart-item-actions {
+        position: absolute;
+        right: 0;
+        top: 30px;
+        transform: none;
+        width: 150px;
+    }
+    
+    .cart-item-price {
+        position: absolute;
+        right: 0;
+        bottom: 30px;
+        width: 150px;
     }
 }

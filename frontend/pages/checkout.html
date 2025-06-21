@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="../js/auth.js"></script>
 </head>
+
 <body>
     <main class="checkout-page">
         <header>
@@ -132,16 +134,17 @@
             <p class="order-number">Order #<span id="order-number">BG25061901</span></p>
             <a href="menu.html" class="return-btn">Return to Menu</a>
         </div>
-    </div>    <script>
+    </div>
+    <script>
         // Authentication is now handled by auth.js
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Checkout page loaded");
-            
+
             // Force create user menu first
             if (typeof forceCreateUserMenu === 'function') {
                 forceCreateUserMenu();
             }
-            
+
             // Require login
             if (!localStorage.getItem('bhaatGhorUser')) {
                 // Store the current path to redirect back after login
@@ -156,7 +159,7 @@
             document.getElementById('email').value = user.email || '';
             document.getElementById('phone').value = user.phone || '';
             document.getElementById('address').value = user.address || '';
-            
+
             // Get checkout data from sessionStorage
             const checkoutDataRaw = sessionStorage.getItem('bhaatGhorCheckoutData');
             if (!checkoutDataRaw) {
@@ -166,7 +169,7 @@
             }
             const checkoutData = JSON.parse(checkoutDataRaw);
             const orderItems = checkoutData.items || [];
-            
+
             // Populate the order summary
             const orderItemsContainer = document.getElementById('order-items');
 
@@ -194,21 +197,21 @@
             document.getElementById('checkout-delivery').textContent = `৳ ${checkoutData.delivery || 60}`;
             document.getElementById('checkout-tax').textContent = `৳ ${checkoutData.tax || 0}`;
             document.getElementById('checkout-total').textContent = `৳ ${checkoutData.total || 60}`;
-            
+
             // Place order button click handler
             document.getElementById('place-order-btn').addEventListener('click', function() {
                 const form = document.getElementById('delivery-form');
-                
-                if (form.checkValidity()) {                    // Generate random order number
-                    const orderNumber = 'BG' + new Date().getFullYear() + 
-                                      String(new Date().getMonth() + 1).padStart(2, '0') + 
-                                      String(new Date().getDate()).padStart(2, '0') + 
-                                      String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+
+                if (form.checkValidity()) { // Generate random order number
+                    const orderNumber = 'BG' + new Date().getFullYear() +
+                        String(new Date().getMonth() + 1).padStart(2, '0') +
+                        String(new Date().getDate()).padStart(2, '0') +
+                        String(Math.floor(Math.random() * 1000)).padStart(3, '0');
                     document.getElementById('order-number').textContent = orderNumber;
-                    
+
                     // Get user info for the order
                     const user = JSON.parse(localStorage.getItem('bhaatGhorUser') || '{}');
-                    
+
                     // Store order in order history
                     const orderData = {
                         orderNumber: orderNumber,
@@ -222,12 +225,12 @@
                         customerAddress: document.getElementById('address').value,
                         paymentMethod: document.querySelector('input[name="payment-method"]:checked').value
                     };
-                    
+
                     // Add to orders in localStorage
                     const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
                     orders.push(orderData);
                     localStorage.setItem('bhaatGhorOrders', JSON.stringify(orders));
-                    
+
                     // Also update user information in case it changed
                     if (user && user.email) {
                         const updatedUser = {
@@ -239,24 +242,24 @@
                         };
                         localStorage.setItem('bhaatGhorUser', JSON.stringify(updatedUser));
                     }
-                      // Clear cart
+                    // Clear cart
                     localStorage.removeItem('bhaatGhorCart');
                     sessionStorage.removeItem('bhaatGhorCheckoutData');
-                      // Add console logging to help debug
+                    // Add console logging to help debug
                     console.log('Order placed successfully! Order ID:', orderNumber);
                     console.log('Updated orders in localStorage:', JSON.parse(localStorage.getItem('bhaatGhorOrders')));
-                    
+
                     // Force a sync of orders
                     if (typeof syncOrdersToStorage === 'function') {
                         syncOrdersToStorage();
                     }
-                      // Show order confirmation
+                    // Show order confirmation
                     document.getElementById('order-confirmation').style.display = 'flex';
                 } else {
                     form.reportValidity();
                 }
             });
-            
+
             // Monitor for login state changes
             window.addEventListener('storage', function(e) {
                 if (e.key === 'bhaatGhorUser') {
@@ -276,4 +279,5 @@
         });
     </script>
 </body>
+
 </html>

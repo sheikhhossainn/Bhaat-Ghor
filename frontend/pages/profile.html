@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
     <main class="checkout-page">
         <header>
@@ -78,7 +80,7 @@
             }
 
             const user = JSON.parse(userRaw);
-            
+
             // Pre-fill form with user data
             document.getElementById('profile-name').value = user.name || '';
             document.getElementById('profile-email').value = user.email || '';
@@ -88,7 +90,7 @@
             // Handle form submission
             document.getElementById('profile-form').addEventListener('submit', function(e) {
                 e.preventDefault();
-                
+
                 const updatedUser = {
                     ...user,
                     name: document.getElementById('profile-name').value,
@@ -104,7 +106,7 @@
             // Load order history (mock data for now)
             const orderHistory = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
             const orderHistoryContainer = document.getElementById('order-history');
-            
+
             if (orderHistory.length === 0) {
                 orderHistoryContainer.innerHTML = '<p>No orders yet. <a href="menu.html">Start ordering!</a></p>';
             } else {
@@ -125,4 +127,5 @@
         });
     </script>
 </body>
+
 </html>

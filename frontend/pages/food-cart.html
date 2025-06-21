@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Cart - Bhaat Ghor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../css/food-cart.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">    <link rel="stylesheet" href="../css/food-cart.css">
     <link rel="stylesheet" href="../css/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="../js/auth.js"></script>
 </head>
 <body>    
     <main class="cart-page">
@@ -60,24 +60,22 @@
                         </div>
                     </div>
                     -->
-                </div>
-
-                <div class="cart-summary">
+                </div>                <div class="cart-summary">
                     <h3 class="summary-title">Order Summary</h3>                    <div class="summary-line">
                         <span>Subtotal</span>
-                        <span id="subtotal">৳ 0</span>
+                        <span id="subtotal" style="font-family: 'Poppins', sans-serif;">৳0</span>
                     </div>
                     <div class="summary-line">
                         <span>Delivery</span>
-                        <span id="delivery">৳ 60</span>
+                        <span id="delivery" style="font-family: 'Poppins', sans-serif;">৳60</span>
                     </div>
                     <div class="summary-line">
                         <span>Tax</span>
-                        <span id="tax">৳ 0</span>
+                        <span id="tax" style="font-family: 'Poppins', sans-serif;">৳0</span>
                     </div>
                     <div class="total-line">
                         <span>Total</span>
-                        <span id="total">৳ 60</span>
+                        <span id="total" style="font-family: 'Poppins', sans-serif;">৳60</span>
                     </div>
                     <a href="checkout.html" class="checkout-btn">Proceed to Checkout</a>
                 </div>
@@ -118,7 +116,8 @@
                         const itemTotal = item.price * item.quantity;
                         subtotal += itemTotal;
                           const cartItemElement = document.createElement('div');
-                        cartItemElement.className = 'cart-item';                        cartItemElement.innerHTML = `
+                        cartItemElement.className = 'cart-item';                        // Create standard HTML structure for each cart item
+                        cartItemElement.innerHTML = `
                             <img src="${item.image}" alt="${item.name}" class="cart-item-image">
                             <div class="cart-item-details">
                                 <h3 class="cart-item-title">${item.name}</h3>
@@ -132,20 +131,23 @@
                                 </div>
                                 <button class="remove-item-btn" data-id="${item.id}"><i class="fas fa-trash"></i></button>
                             </div>
-                            <p class="cart-item-price">৳ ${item.price.toFixed(0)}</p>
+                            <p class="cart-item-price">৳${item.price.toFixed(0)}</p>
                         `;
                         
                         cartItemsContainer.appendChild(cartItemElement);
                     });
-                    
-                    // Update summary calculations
+                      // Update summary calculations
                     const tax = Math.round(subtotal * 0.05); // 5% tax
                     const delivery = subtotal > 0 ? 60 : 0; // Delivery charge
-                    const total = subtotal + tax + delivery;
-                      document.getElementById('subtotal').textContent = `৳ ${subtotal}`;
-                    document.getElementById('tax').textContent = `৳ ${tax}`;
-                    document.getElementById('delivery').textContent = `৳ ${delivery}`;
-                    document.getElementById('total').textContent = `৳ ${total}`;
+                    const total = subtotal + tax + delivery;                      document.getElementById('subtotal').textContent = `৳${subtotal}`;
+                    document.getElementById('tax').textContent = `৳${tax}`;
+                    document.getElementById('delivery').textContent = `৳${delivery}`;
+                    document.getElementById('total').textContent = `৳${total}`;
+                    
+                    // Ensure consistent font styling
+                    ['subtotal', 'tax', 'delivery', 'total'].forEach(id => {
+                        document.getElementById(id).style.fontFamily = "'Poppins', sans-serif";
+                    });
                     
                     // Add event listeners for quantity buttons
                     document.querySelectorAll('.decrease-btn').forEach(btn => {
@@ -159,12 +161,16 @@
                             updateItemQuantity(this.dataset.id, 1);
                         });
                     });
-                    
-                    // Add event listeners for remove buttons
+                      // Add event listeners for remove buttons
                     document.querySelectorAll('.remove-item-btn').forEach(btn => {
                         btn.addEventListener('click', function() {
                             removeItem(this.dataset.id);
                         });
+                    });
+                    
+                    // Ensure consistent styling for all price elements
+                    document.querySelectorAll('.cart-item-price').forEach(el => {
+                        el.style.fontFamily = "'Poppins', sans-serif";
                     });
                 }
             }
@@ -213,13 +219,13 @@
                 const tax = Math.round(subtotal * 0.05);
                 const delivery = subtotal > 0 ? 60 : 0;
                 const total = subtotal + tax + delivery;
-                
-                sessionStorage.setItem('bhaatGhorCheckoutData', JSON.stringify({
+                  sessionStorage.setItem('bhaatGhorCheckoutData', JSON.stringify({
                     items: currentCartItems,
                     subtotal: subtotal,
                     tax: tax,
                     delivery: delivery,
-                    total: total                }));
+                    total: total
+                }));
                 // Navigate to checkout page
                 window.location.href = 'checkout.html';
             });
@@ -229,13 +235,37 @@
                 setTimeout(forceCreateUserMenu, 500);
             }
         });
-    </script>
-    <script>
+    </script>    <script>
         // Call forceCreateUserMenu once the page is loaded
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof forceCreateUserMenu === 'function') {
                 setTimeout(forceCreateUserMenu, 500);
             }
+            
+            // Ensure consistent font styling for all currency elements
+            function fixCurrencyFonts() {
+                const currencyElements = [
+                    '.cart-item-price', 
+                    '#subtotal', 
+                    '#delivery', 
+                    '#tax', 
+                    '#total',
+                    '.summary-line span:last-child',
+                    '.total-line span'
+                ];
+                
+                currencyElements.forEach(selector => {
+                    document.querySelectorAll(selector).forEach(el => {
+                        el.style.fontFamily = "'Poppins', sans-serif";
+                    });
+                });
+            }
+            
+            // Run on page load
+            fixCurrencyFonts();
+            
+            // Run again after a short delay to catch any dynamically created elements
+            setTimeout(fixCurrencyFonts, 1000);
         });
     </script>
 </body>

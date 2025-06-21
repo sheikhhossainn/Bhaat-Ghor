@@ -224,12 +224,20 @@
                         customerPhone: document.getElementById('phone').value,
                         customerAddress: document.getElementById('address').value,
                         paymentMethod: document.querySelector('input[name="payment-method"]:checked').value
-                    };
-
-                    // Add to orders in localStorage
-                    const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+                    };                    // Add to orders in localStorage
+                    let orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+                    
+                    // Verify that orders is an array
+                    if (!Array.isArray(orders)) {
+                        console.warn('Orders was not an array, resetting to empty array');
+                        orders = [];
+                    }
+                    
                     orders.push(orderData);
                     localStorage.setItem('bhaatGhorOrders', JSON.stringify(orders));
+                    
+                    // Log the order for debugging
+                    console.log('Order added. Current orders:', orders.length);
 
                     // Also update user information in case it changed
                     if (user && user.email) {

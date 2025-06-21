@@ -223,7 +223,15 @@ function showOrdersModal() {
     closeModal('orders-modal');
     
     // Force a refresh of orders from localStorage
-    const orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+    let orders = JSON.parse(localStorage.getItem('bhaatGhorOrders') || '[]');
+    
+    // Debug and fix orders if necessary
+    if (!Array.isArray(orders)) {
+        console.warn('Orders was not an array, resetting to empty array');
+        orders = [];
+        localStorage.setItem('bhaatGhorOrders', JSON.stringify(orders));
+    }
+    
     console.log('Current orders:', orders.length);
     
     const modal = document.createElement('div');
@@ -611,6 +619,32 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1000);
 });
+
+// Add a global storage event listener to handle changes across pages
+window.addEventListener('storage', function(e) {
+    console.log('Storage event triggered:', e.key);
+    
+    if (e.key === 'bhaatGhorUser' || e.key === 'bhaatGhorOrders' || e.key === 'bhaatGhorCart') {
+        console.log('Relevant storage change detected, updating UI...');
+        
+        // Force recreate the user menu
+        if (typeof forceCreateUserMenu === 'function') {
+            setTimeout(forceCreateUserMenu, 100);
+        }
+    }
+});
+
+// Fix for when localStorage is changed in the same window
+function triggerStorageUpdate(key) {
+    // Simulate a storage event for the current window
+    const event = new StorageEvent('storage', {
+        key: key,
+        newValue: localStorage.getItem(key),
+        oldValue: null,
+        storageArea: localStorage
+    });
+    window.dispatchEvent(event);
+}
 
 // Function to fix issues immediately from the console
 function fixBhaatGhor() {

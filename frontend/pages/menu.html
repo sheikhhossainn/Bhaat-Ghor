@@ -239,11 +239,21 @@
     </main>
 
     <script src="../js/app.js"></script>
-    <script src="../js/auth.js"></script>
-
-    <script>
+    <script src="../js/auth.js"></script>    <script>
         // Cart functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Force create user menu first to ensure dropdown buttons work
+            if (typeof forceCreateUserMenu === 'function') {
+                forceCreateUserMenu();
+                console.log("Menu page: Forced creation of user menu");
+            } else {
+                console.warn("Menu page: forceCreateUserMenu function not available");
+                // Try to initialize directly as fallback
+                if (typeof initUserMenu === 'function') {
+                    initUserMenu();
+                }
+            }
+            
             // Force cart icon to be visible with important styles
             const cartBadge = document.querySelector('.cart-badge');
             if (cartBadge) {
@@ -284,13 +294,16 @@
                             description: itemDescription,
                             quantity: 1
                         });
-                    }
-
-                    // Save cart to localStorage
+                    }                    // Save cart to localStorage
                     localStorage.setItem('bhaatGhorCart', JSON.stringify(cartItems));
 
                     // Update cart count
                     updateCartCount(cartItems.length);
+                    
+                    // Fix: Force refresh the user menu to ensure dropdown works
+                    if (typeof forceCreateUserMenu === 'function') {
+                        setTimeout(forceCreateUserMenu, 100);
+                    }
 
                     // Provide feedback to user
                     this.innerHTML = 'Added to Cart <i class="fas fa-check"></i>';
@@ -327,6 +340,66 @@
                     cartCountElement.style.display = totalItems > 0 ? 'flex' : 'none';
                 }
             }
+
+            // Fix: Add direct event handlers for user menu dropdown buttons
+            setTimeout(function() {
+                // For Profile button
+                const profileBtn = document.getElementById('profile-btn');
+                if (profileBtn) {
+                    profileBtn.addEventListener('click', function() {
+                        if (typeof showProfileModal === 'function') {
+                            showProfileModal();
+                            const dropdown = document.getElementById('dropdown-menu');
+                            if (dropdown) dropdown.classList.remove('show');
+                        } else {
+                            console.error('showProfileModal function not found');
+                        }
+                    });
+                }
+                
+                // For Orders button
+                const ordersBtn = document.getElementById('orders-btn');
+                if (ordersBtn) {
+                    ordersBtn.addEventListener('click', function() {
+                        if (typeof showOrdersModal === 'function') {
+                            showOrdersModal();
+                            const dropdown = document.getElementById('dropdown-menu');
+                            if (dropdown) dropdown.classList.remove('show');
+                        } else {
+                            console.error('showOrdersModal function not found');
+                        }
+                    });
+                }
+                
+                // For Account Settings button
+                const accountBtn = document.getElementById('account-btn');
+                if (accountBtn) {
+                    accountBtn.addEventListener('click', function() {
+                        if (typeof showAccountModal === 'function') {
+                            showAccountModal();
+                            const dropdown = document.getElementById('dropdown-menu');
+                            if (dropdown) dropdown.classList.remove('show');
+                        } else {
+                            console.error('showAccountModal function not found');
+                        }
+                    });
+                }
+                
+                // For Logout button
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function() {
+                        if (confirm('Are you sure you want to logout?')) {
+                            localStorage.removeItem('bhaatGhorUser');
+                            localStorage.removeItem('bhaatGhorCart');
+                            sessionStorage.removeItem('bhaatGhorCheckoutData');
+                            window.location.reload();
+                        }
+                    });
+                }
+                
+                console.log('Menu page: Added direct event handlers for user menu buttons');
+            }, 1000);
         });
     </script>
 </body>

@@ -118,7 +118,8 @@
     overflow: visible;
     position: relative;
     transition: all 0.3s ease; /* Enhanced transition for filtering */
-    height: 500px; /* Fixed height for all menu items */
+    height: auto; /* Remove fixed height to allow content to determine height */
+    min-height: 450px; /* Minimum height for consistency */
     display: flex;
     flex-direction: column;
     opacity: 1;
@@ -167,6 +168,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden; /* Ensure content doesn't overflow */
 }
 
 .menu-item-header {
@@ -385,13 +387,39 @@ nav li:last-child a:hover {
         order: 2;
         margin: 0 0 1rem 0;
     }
-      .cart-badge {
+    
+    .cart-badge {
         padding: 0.5rem;
         margin: 0;
         box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
     }
-      .cart-badge .fa-shopping-cart {
+    
+    .cart-badge .fa-shopping-cart {
         font-size: 1.1rem;
+    }
+    
+    /* Menu responsive fixes for tablets */
+    .menu-header h1 {
+        font-size: 2.8rem;
+    }
+    
+    .menu-items-container {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        padding: 1.5rem;
+    }
+    
+    .menu-item {
+        min-height: 400px;
+    }
+    
+    .menu-item-image-container {
+        height: 220px;
+    }
+    
+    .menu-categories {
+        gap: 0.8rem;
+        margin: 2rem 0;
     }
 }
 
@@ -411,11 +439,38 @@ nav li:last-child a:hover {
     nav li:last-child a {
         padding: 0.4rem 1rem;
     }
-      .cart-badge {
+    
+    .cart-badge {
         padding: 0.4rem;
     }
-      .cart-badge .fa-shopping-cart {
+    
+    .cart-badge .fa-shopping-cart {
         font-size: 1rem;
+    }
+    
+    /* Menu responsive fixes for small phones */
+    .menu-items-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+    
+    .menu-item-image-container {
+        height: 200px;
+    }
+    
+    .menu-item-content {
+        margin-top: -40px;
+        padding: 1rem;
+    }
+    
+    .menu-item-title {
+        font-size: 1.4rem;
+    }
+    
+    .category-btn {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.9rem;
     }
 }
 
